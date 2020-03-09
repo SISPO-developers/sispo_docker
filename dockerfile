@@ -78,6 +78,13 @@ RUN cd /app/blender/build/ && make -j4 install
 ####Below this line do not make changes unless you want to invoke the blender build process again
 
 #Copy sispo
-COPY ./sispo ./app/sispo
+COPY ./sispo /app/sispo
+
+#install sispo
+SHELL ["conda", "run", "-n", "myenv", "/bin/bash", "-c"]
+RUN cd /app/sispo && python setup.py install
+
+
+
 
 
