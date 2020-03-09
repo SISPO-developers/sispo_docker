@@ -2,6 +2,8 @@
 
 Some useful commands, explanation comes later
 
+UCAC4 files need to be downloaded separately. 
+
 
 '''
 
