@@ -1,0 +1,10 @@
+name: myenv
+channels:
+  - conda-forge
+dependencies:
+  - python=3.7
+  - orekit=9.3.1
+  - pybind11
+  - numpy
+  - future_fstrings
+  - requests
