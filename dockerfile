@@ -84,6 +84,11 @@ COPY ./sispo /app/sispo
 SHELL ["conda", "run", "-n", "myenv", "/bin/bash", "-c"]
 RUN cd /app/sispo && python setup.py install
 
+#add preloading for jemalloc
+#blender uses jemalloc, we could compile blender without jemalloc, but jemalloc
+#offers better memory management (python and blender can cause memory fragmentation)
+RUN echo "alias python=\"LD_PRELOAD=/usr/lib/x86_64-linux-gnu/libjemalloc.so.2 python\"" >> /root/.bashrc
+
 
 
 
