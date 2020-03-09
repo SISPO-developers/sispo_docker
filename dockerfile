@@ -30,6 +30,8 @@ RUN apt-get update && apt-get install -y nano gcc g++ cmake gawk cmake cmake-cur
 RUN echo "source activate $(head -1 /tmp/environment.yml | cut -d' ' -f2)" > ~/.bashrc
 ENV PATH /opt/conda/envs/$(head -1 /tmp/environment.yml | cut -d' ' -f2)/bin:$PATH
 
+ENV PYENV=/opt/conda/envs/myenv
+ENV PYVERSION=3.7
 
 #Create directory for apps
 RUN mkdir app
@@ -40,21 +42,42 @@ RUN mkdir app
 COPY ./blender ./app/blender
 
 #compile blender bpy
-COPY ./build_blender.sh /app/build_blender.sh
-RUN /bin/bash /app/build_blender.sh
+RUN cd app/blender/build && cmake -DCMAKE_INSTALL_PREFIX=$PYENV/lib/python$PYVERSION/site-packages \
+    -DWITH_PYTHON_INSTALL=OFF \
+    -DWITH_PYTHON_MODULE=ON \
+    -DPYTHON_ROOT_DIR=$PYENV/bin \
+    -DPYTHON_SITE_PACKAGES=$PYENV/lib/python$PYVERSION/site-packages \
+    -DPYTHON_INCLUDE_DIR="$PYENV/include/python${PYVERSION}m" \
+    -DPYTHON_LIBRARY="$PYENV/lib/libpython${PYVERSION}m.so" \
+    -DPYTHON_VERSION=$PYVERSION \
+    -DWITH_INSTALL_PORTABLE=OFF \
+    -DWITH_CYCLES_EMBREE=OFF \
+    -DWITH_CYCLES=ON \
+    -DWITH_CYCLES_DEVICE_CUDA=OFF \
+    -DWITH_OPENSUBDIV=ON \
+    -DWITH_OPENAL=OFF \
+    -DWITH_CODEC_AVI=OFF \
+    -DWITH_MOD_OCEANSIM=OFF \
+    -DWITH_CODEC_FFMPEG=OFF \
+    -DWITH_SYSTEM_GLEW=OFF \
+    -DWITH_FFTW3=ON \
+    -DWITH_INTERNATIONAL=OFF \
+    -DWITH_BULLET=OFF \
+    -DWITH_IK_SOLVER=OFF \
+    -DWITH_IK_ITASC=OFF \
+    -DWITH_PYTHON_INSTALL_NUMPY=OFF \
+    -DWITH_MOD_FLUID=OFF \
+    -DWITH_AUDASPACE=OFF \
+    -DWITH_OPENCOLORIO=ON \
+    -DCMAKE_BUILD_TYPE:STRING=Release ..
+
 
 #Set the number of threads available for "make" (default: 4)
 RUN cd /app/blender/build/ && make -j4 install
 
 ####Below this line do not make changes unless you want to invoke the blender build process again
 
-
-
 #Copy sispo
 COPY ./sispo ./app/sispo
 
 
-
-##These are not workign currently
-#RUN pip --no-cache-dir install OpenEXR
-#RUN cd /app/sispo/ && python setup.py install
