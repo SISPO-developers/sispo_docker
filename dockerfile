@@ -33,6 +33,7 @@ ENV PATH /opt/conda/envs/$(head -1 /tmp/environment.yml | cut -d' ' -f2)/bin:$PA
 ENV PYENV=/opt/conda/envs/myenv
 ENV PYVERSION=3.7
 
+
 #Create directory for apps
 RUN mkdir app
 
@@ -75,7 +76,8 @@ RUN cd app/blender/build && cmake -DCMAKE_INSTALL_PREFIX=$PYENV/lib/python$PYVER
 #Set the number of threads available for "make" (default: 4)
 RUN cd /app/blender/build/ && make -j4 install
 
-####Below this line do not make changes unless you want to invoke the blender build process again
+####Above this line do not make changes unless you want to invoke the blender build process again
+ENV THREADS=4
 
 #Copy sispo
 COPY ./sispo /app/sispo
@@ -83,6 +85,75 @@ COPY ./sispo /app/sispo
 #install sispo
 SHELL ["conda", "run", "-n", "myenv", "/bin/bash", "-c"]
 RUN cd /app/sispo && python setup.py install
+
+
+
+
+#compile & install star_cat
+ENV SISPOSOFT=/app/sispo/software/star_cats/build_star_cats
+COPY ./star_cats /app/star_cats
+RUN cd /app/star_cats && make
+RUN mkdir -p $SISPOSOFT
+RUN cp /app/star_cats/cmcrange $SISPOSOFT/
+RUN cp /app/star_cats/cmc_xvt $SISPOSOFT/
+RUN cp /app/star_cats/extr_cmc $SISPOSOFT/
+
+
+
+
+
+#compile & install openMVS
+ENV OPENMVSSOFT=/app/sispo/software/openMVS/build_openMVS
+COPY ./VCG /app/VCG
+COPY ./openMVS /app/openMVS
+RUN mkdir -p $OPENMVSSOFT 
+
+
+RUN apt-get update && apt-get install -y \
+        libcgal-dev libeigen3-dev liblapack-dev  libflann-dev \
+        libceres-dev \
+        &&  rm -rf /var/lib/apt/lists/*
+
+
+
+RUN cd /app/openMVS && mkdir -p build && cd build && \
+         cmake .. \
+	-DCMAKE_BUILD_TYPE=Release \
+	-DVCG_DIR=/app/VCG/ \
+	-DCMAKE_INSTALL_PREFIX=$OPENMVSSOFT/install 
+
+RUN cd /app/openMVS/build/ && make install -j$THREADS
+
+
+
+
+
+#compile & install openMVG
+ENV OPENMVGSOFT=/app/sispo/software/openMVG/build_openMVG
+COPY ./openMVG /app/openMVG
+RUN mkdir -p $OPENMVGSOFT
+
+RUN cd /app/openMVG && mkdir build && cd build && \
+        cmake 	../src/ \ 
+                -DCMAKE_INSTALL_PREFIX=$OPENMVGSOFT/install \
+                -DINCLUDE_INSTALL_DIR=$OPENMVGSOFT/install/include \
+                -DPYTHON_EXECUTABLE=$PYENV/bin/python 
+
+RUN cd /app/openMVG/build/ && make install -j$THREADS
+
+
+
+
+
+RUN cp /app/star_cats/cmcrange $SISPOSOFT/
+RUN cp /app/star_cats/cmc_xvt $SISPOSOFT/
+RUN cp /app/star_cats/extr_cmc $SISPOSOFT/
+
+
+
+
+
+
 
 #add preloading for jemalloc
 #blender uses jemalloc, we could compile blender without jemalloc, but jemalloc

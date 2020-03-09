@@ -1,10 +1,11 @@
 name: myenv
 channels:
+  - defaults
   - conda-forge
 dependencies:
   - python=3.7
+  - setuptools
+  - numpy=1.16.5
   - orekit=9.3.1
-  - pybind11
-  - numpy
-  - future_fstrings
-  - requests
+  - opencv=4.1.1
+  - astropy=3.2.2
