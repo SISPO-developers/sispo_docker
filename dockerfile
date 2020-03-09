@@ -33,14 +33,11 @@ ENV PATH /opt/conda/envs/$(head -1 /tmp/environment.yml | cut -d' ' -f2)/bin:$PA
 
 #Create directory for apps
 RUN mkdir app
-#Copy sispo
-COPY ./sispo ./app/sispo
+
 #Copy blender. We could also "git clone" but I don't think it is a good idea to let the
 #the docker to clone the repo each time the image is build due to the small changes
-#in the remote repo which causes the blender to be build again.
+#in the remote repo. The changes in the folder will cause the blender to be build again.
 COPY ./blender ./app/blender
-RUN mkdir app/blender/build
-
 
 #compile blender bpy
 COPY ./build_blender.sh /app/build_blender.sh
@@ -49,8 +46,12 @@ RUN /bin/bash /app/build_blender.sh
 #Set the number of threads available for "make" (default: 4)
 RUN cd /app/blender/build/ && make -j4 install
 
-
 ####Below this line do not make changes unless you want to invoke the blender build process again
+
+
+
+#Copy sispo
+COPY ./sispo ./app/sispo
 
 
 
