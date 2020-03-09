@@ -1,8 +1,16 @@
+#References: 
+#CONDA in docker: https://medium.com/@chadlagore/conda-environments-with-docker-82cdc9d25754
+#https://github.com/r-pad/model_renderer
+
+
+#Select parent image 
 FROM continuumio/miniconda3
 
+#Make the conda environment to work in the docker image
 ADD environment.yml /tmp/environment.yml
 RUN conda env create -f /tmp/environment.yml
 
+#Install some necessary dependencies for the blender and remove 
 RUN apt-get update && apt-get install -y nano gcc g++ cmake gawk cmake cmake-curses-gui \
                       build-essential libjpeg-dev libpng-dev libtiff-dev \
                       git libfreetype6-dev libx11-dev flex bison libtbb-dev \
@@ -18,27 +26,34 @@ RUN apt-get update && apt-get install -y nano gcc g++ cmake gawk cmake cmake-cur
                       libswscale-dev libalut-dev libalut0 libmp3lame-dev libspnav-dev \
                       libspnav0 libboost-all-dev &&  rm -rf /var/lib/apt/lists/*
 
-
 # Pull the environment name out of the environment.yml
 RUN echo "source activate $(head -1 /tmp/environment.yml | cut -d' ' -f2)" > ~/.bashrc
+ENV PATH /opt/conda/envs/$(head -1 /tmp/environment.yml | cut -d' ' -f2)/bin:$PATH
 
 
-
-
+#Create directory for apps
 RUN mkdir app
+#Copy sispo
 COPY ./sispo ./app/sispo
+#Copy blender. We could also "git clone" but I don't think it is a good idea to let the
+#the docker to clone the repo each time the image is build due to the small changes
+#in the remote repo which causes the blender to be build again.
 COPY ./blender ./app/blender
 RUN mkdir app/blender/build
 
 
+#compile blender bpy
+COPY ./build_blender.sh /app/build_blender.sh
+RUN /bin/bash /app/build_blender.sh
 
-ENV PATH /opt/conda/envs/$(head -1 /tmp/environment.yml | cut -d' ' -f2)/bin:$PATH
-
-COPY ./build0.sh /app/build0.sh
-
-RUN /bin/bash /app/build0.sh
+#Set the number of threads available for "make" (default: 4)
 RUN cd /app/blender/build/ && make -j4 install
 
 
-RUN pip --no-cache-dir install OpenEXR
+####Below this line do not make changes unless you want to invoke the blender build process again
+
+
+
+##These are not workign currently
+#RUN pip --no-cache-dir install OpenEXR
 #RUN cd /app/sispo/ && python setup.py install
