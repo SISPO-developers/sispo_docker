@@ -148,6 +148,8 @@ RUN cd /app/openMVG/build/ && make install -j$THREADS
 RUN cp /app/star_cats/cmcrange $SISPOSOFT/
 RUN cp /app/star_cats/cmc_xvt $SISPOSOFT/
 RUN cp /app/star_cats/extr_cmc $SISPOSOFT/
+RUN cp /app/star_cats/u4test $SISPOSOFT/
+
 
 
 
