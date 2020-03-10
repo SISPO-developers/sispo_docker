@@ -2,9 +2,12 @@
 #CONDA in docker: https://medium.com/@chadlagore/conda-environments-with-docker-82cdc9d25754
 #https://github.com/r-pad/model_renderer
 
-
 #Select parent image 
 FROM continuumio/miniconda3
+
+
+ENV THREADS=4
+
 
 #Make the conda environment to work in the docker image
 ADD environment.yml /tmp/environment.yml
@@ -74,17 +77,12 @@ RUN cd app/blender/build && cmake -DCMAKE_INSTALL_PREFIX=$PYENV/lib/python$PYVER
 
 
 #Set the number of threads available for "make" (default: 4)
-RUN cd /app/blender/build/ && make -j4 install
+RUN cd /app/blender/build/ && make -j$THREADS install
 
 ####Above this line do not make changes unless you want to invoke the blender build process again
-ENV THREADS=4
 
-#Copy sispo
-COPY ./sispo /app/sispo
 
-#install sispo
-SHELL ["conda", "run", "-n", "myenv", "/bin/bash", "-c"]
-RUN cd /app/sispo && python setup.py install
+
 
 
 
@@ -116,17 +114,19 @@ RUN apt-get update && apt-get install -y \
 
 
 
+
+ENV OpenCV_DIR=/opt/conda/envs/myenv/lib/cmake/
+
 RUN cd /app/openMVS && mkdir -p build && cd build && \
          cmake .. \
 	-DCMAKE_BUILD_TYPE=Release \
 	-DVCG_DIR=/app/VCG/ \
-	-DCMAKE_INSTALL_PREFIX=$OPENMVSSOFT/install 
+	-DCMAKE_INSTALL_PREFIX=$OPENMVSSOFT/install \
+        -DOpenMVS_USE_CUDA=OFF \
+        -OpenMVS_USE_BREAKPAD=OFF
+        
 
 RUN cd /app/openMVS/build/ && make install -j$THREADS
-
-
-
-
 
 #compile & install openMVG
 ENV OPENMVGSOFT=/app/sispo/software/openMVG/build_openMVG
@@ -153,7 +153,12 @@ RUN cp /app/star_cats/u4test $SISPOSOFT/
 
 
 
+#Copy sispo
+COPY ./sispo /app/sispo
 
+#install sispo
+SHELL ["conda", "run", "-n", "myenv", "/bin/bash", "-c"]
+RUN cd /app/sispo && python setup.py install
 
 
 
