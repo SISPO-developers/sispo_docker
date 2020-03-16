@@ -14,6 +14,7 @@ function download_sispo {
 #Download blender and and some dependencies
 function download_blender {
     git clone https://github.com/blender/blender.git
+    git checkout blender-v2.82-release
     #prepare for the compiling
     mkdir blender/build
     cd blender
@@ -43,13 +44,13 @@ function download_openmvs {
 }
 
 
-#download_sispo
-#git clone git@github.com:thvaisa/DES.git
-#git clone git@github.com:thvaisa/DKS.git
+download_sispo
+git clone git@github.com:thvaisa/DES.git
+git clone git@github.com:thvaisa/DKE.git
 download_openmvs
 download_openmvg
-#download_star_cats
-#download_blender
+download_star_cats
+download_blender
 
 
 
