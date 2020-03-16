@@ -35,7 +35,7 @@ ENV PATH /opt/conda/envs/$(head -1 /tmp/environment.yml | cut -d' ' -f2)/bin:$PA
 
 ENV PYENV=/opt/conda/envs/myenv
 ENV PYVERSION=3.7
-
+ENV CUDA=OFF
 
 #Create directory for apps
 RUN mkdir app
@@ -57,7 +57,7 @@ RUN cd app/blender/build && cmake -DCMAKE_INSTALL_PREFIX=$PYENV/lib/python$PYVER
     -DWITH_INSTALL_PORTABLE=OFF \
     -DWITH_CYCLES_EMBREE=OFF \
     -DWITH_CYCLES=ON \
-    -DWITH_CYCLES_DEVICE_CUDA=OFF \
+    -DWITH_CYCLES_DEVICE_CUDA=$CUDA \
     -DWITH_OPENSUBDIV=ON \
     -DWITH_OPENAL=OFF \
     -DWITH_CODEC_AVI=OFF \
