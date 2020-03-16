@@ -84,6 +84,97 @@ RUN cd /app/blender/build/ && make -j$THREADS install
 
 
 
+#compile & install star_cat
+ENV SISPOSOFT=/app/sispo/software/star_cats/build_star_cats
+COPY ./star_cats /app/star_cats
+RUN cd /app/star_cats && make
+RUN mkdir -p $SISPOSOFT
+RUN cp /app/star_cats/cmcrange $SISPOSOFT/
+RUN cp /app/star_cats/cmc_xvt $SISPOSOFT/
+RUN cp /app/star_cats/extr_cmc $SISPOSOFT/
+
+
+
+
+
+#compile & install openMVS
+ENV OPENMVSSOFT=/app/sispo/software/openMVS/build_openMVS
+COPY ./VCG /app/VCG
+COPY ./openMVS /app/openMVS
+RUN mkdir -p $OPENMVSSOFT 
+
+
+RUN apt-get update && apt-get install -y \
+        libcgal-dev libeigen3-dev liblapack-dev  libflann-dev \
+        libceres-dev \
+        &&  rm -rf /var/lib/apt/lists/*
+
+
+
+
+ENV OpenCV_DIR=/opt/conda/envs/myenv/lib/cmake/
+
+RUN cd /app/openMVS && mkdir -p build && cd build && \
+         cmake .. \
+	-DCMAKE_BUILD_TYPE=Release \
+	-DVCG_DIR=/app/VCG/ \
+	-DCMAKE_INSTALL_PREFIX=$OPENMVSSOFT/install \
+        -DOpenMVS_USE_CUDA=OFF \
+        -OpenMVS_USE_BREAKPAD=OFF
+        
+
+RUN cd /app/openMVS/build/ && make install -j$THREADS
+
+#compile & install openMVG
+ENV OPENMVGSOFT=/app/sispo/software/openMVG/build_openMVG
+COPY ./openMVG /app/openMVG
+RUN mkdir -p $OPENMVGSOFT
+
+RUN cd /app/openMVG && mkdir build && cd build && \
+        cmake 	../src/ \ 
+                -DCMAKE_INSTALL_PREFIX=$OPENMVGSOFT/install \
+                -DINCLUDE_INSTALL_DIR=$OPENMVGSOFT/install/include \
+                -DPYTHON_EXECUTABLE=$PYENV/bin/python 
+
+RUN cd /app/openMVG/build/ && make install -j$THREADS
+
+
+
+
+
+RUN cp /app/star_cats/cmcrange $SISPOSOFT/
+RUN cp /app/star_cats/cmc_xvt $SISPOSOFT/
+RUN cp /app/star_cats/extr_cmc $SISPOSOFT/
+RUN cp /app/star_cats/u4test $SISPOSOFT/
+
+
+
+
+#Copy sispo
+COPY ./sispo /app/sispo
+
+#install sispo
+SHELL ["conda", "run", "-n", "myenv", "/bin/bash", "-c"]
+RUN cd /app/sispo && python setup.py install
+
+COPY ./DES/ /app/DES
+RUN mkdir /app/sispo/software/build_des
+RUN cd /app/DES/build/ && cmake ..
+RUN cd /app/DES/build && make && cp /app/DES/build/src/des /app/sispo/software/build_des/
+
+
+
+RUN apt-get update && apt-get install -y \
+        libpcl-dev \
+        &&  rm -rf /var/lib/apt/lists/*
+
+
+COPY ./DKE/ /app/DKE
+RUN mkdir -p /app/DKE/build
+RUN cd /app/DKE/build && cmake .. 
+RUN cd /app/DKE/build && make 
+RUN cp /app/DKE/build/DKE /app/sispo/software/build_des/
+
 
 
 #add preloading for jemalloc
