@@ -5,9 +5,22 @@ Some useful commands, explanation comes later
 UCAC4 files need to be downloaded separately. 
 
 
+Build image
+
 '''
 
 docker build -t dockerfile .
+
+'''
+
+
+
+
+
+
+
+
+'''
 
 sudo docker run --name WALTERWHITE -dit dockerfile
 

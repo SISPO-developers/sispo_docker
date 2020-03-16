@@ -2,40 +2,61 @@
 
 CURWRKDIR=pwd
 
-##SISPO
-git clone https://github.com/YgabrielsY/sispo.git
-mkdir ./sispo/data/results
-mkdir ./sispo/data/UCAC4
 
-git clone https://github.com/cdcseacave/openMVS.git openMVS
-git clone https://github.com/cdcseacave/VCG.git
-git clone --recursive https://github.com/openMVG/openMVG.git
-git clone https://github.com/Bill-Gray/star_cats.git
+#Download sispo and create and some necessary folders used during the simulation
+function download_sispo {
+    git clone https://github.com/YgabrielsY/sispo.git
+    mkdir -p ./sispo/data/results
+    mkdir -p ./sispo/data/UCAC4  
+}
 
 
-
-#cd ./sispo/software
-
-#star cats
-#mkdir star_cats
-#cd star_cats
-#git clone https://github.com/Bill-Gray/star_cats.git
-#mkdir build_star_cats
-
-#cd $CURWRKDIR
-
-
-
+#Download blender and and some dependencies
+function download_blender {
+    git clone https://github.com/blender/blender.git
+    #prepare for the compiling
+    mkdir blender/build
+    cd blender
+    git submodule update --init --recursive
+    git submodule foreach git checkout master
+    git submodule foreach git pull --rebase origin master
+    cd ..
+}
 
 
-##BLENDER
-#git clone https://github.com/blender/blender.git
-#cd blender
-##prepare for the compiling
-#mkdir build
-#git submodule update --init --recursive
-#git submodule foreach git checkout master
-#git submodule foreach git pull --rebase origin master
+#Download star_cats
+function download_star_cats {
+    git clone https://github.com/Bill-Gray/star_cats.git
+    mkdir -p ./sispo/software/star_cats/build_star_cats
+}
+
+
+#Download openmvg and dependencies
+function download_openmvg {
+    git clone https://github.com/cdcseacave/VCG.git
+    git clone --recursive https://github.com/openMVG/openMVG.git
+}
+
+
+function download_openmvs {
+    git clone https://github.com/cdcseacave/openMVS.git openMVS
+}
+
+
+#download_sispo
+#git clone git@github.com:thvaisa/DES.git
+#git clone git@github.com:thvaisa/DKS.git
+download_openmvs
+download_openmvg
+#download_star_cats
+#download_blender
+
+
+
+
+
+
+
 
 
 
