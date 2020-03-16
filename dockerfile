@@ -160,7 +160,22 @@ COPY ./sispo /app/sispo
 SHELL ["conda", "run", "-n", "myenv", "/bin/bash", "-c"]
 RUN cd /app/sispo && python setup.py install
 
+COPY ./DES/ /app/DES
+RUN mkdir /app/sispo/software/build_des
+RUN cd /app/DES/build/ && cmake ..
+RUN cd /app/DES/build && make && cp /app/DES/build/src/des /app/sispo/software/build_des/
 
+
+
+RUN apt-get update && apt-get install -y \
+        libpcl-dev \
+        &&  rm -rf /var/lib/apt/lists/*
+
+
+COPY ./densityKernel/ /app/densityKernel
+RUN cd /app/densityKernel/build && cmake .. 
+RUN cd /app/densityKernel/build && make 
+RUN cp /app/densityKernel/build/octree_search /app/sispo/software/build_des/
 
 #add preloading for jemalloc
 #blender uses jemalloc, we could compile blender without jemalloc, but jemalloc
