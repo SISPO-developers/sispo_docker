@@ -14,10 +14,11 @@ function download_sispo {
 #Download blender and and some dependencies
 function download_blender {
     git clone https://github.com/blender/blender.git
+    
+    cd blender
     git checkout blender-v2.82-release
     #prepare for the compiling
-    mkdir blender/build
-    cd blender
+    mkdir build
     git submodule update --init --recursive
     git submodule foreach git checkout master
     git submodule foreach git pull --rebase origin master
