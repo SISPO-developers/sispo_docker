@@ -19,4 +19,7 @@ sudo docker run -v /home/rokka/WRKDIR/sispo/data/UCAC4:/app/sispo/data/UCAC4 --n
 
 LD_PRELOAD=/usr/lib/x86_64-linux-gnu/libjemalloc.so.2 python
 
+
+sudo docker run -v /home/rokka/WRKDIR/sispo_docker/sispo/data/:/app/sispo/data/ -v /home/rokka/WRKDIR/sispo_docker/sispo/sispo/:/app/sispo/sispo/ --name WALTERWHITE -dit dockerfile
+
 '''
