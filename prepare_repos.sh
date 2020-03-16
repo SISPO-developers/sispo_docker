@@ -5,7 +5,8 @@ CURWRKDIR=pwd
 
 #Download sispo and create and some necessary folders used during the simulation
 function download_sispo {
-    git clone https://github.com/YgabrielsY/sispo.git
+    #git clone https://github.com/YgabrielsY/sispo.git
+    git clone https://github.com/thvaisa/sispo
     mkdir -p ./sispo/data/results
     mkdir -p ./sispo/data/UCAC4  
 }
