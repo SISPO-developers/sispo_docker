@@ -20,14 +20,16 @@ RUN apt-get update && apt-get install -y nano gcc g++ cmake gawk cmake cmake-cur
                       libxxf86vm-dev libxcursor-dev libxi-dev wget libsqlite3-dev \
                       libxrandr-dev libxinerama-dev libbz2-dev libncurses5-dev \
                       libssl-dev liblzma-dev libreadline-dev libopenal-dev \
-                      libglew-dev yasm libtheora-dev libvorbis-dev libogg-dev \
+                      libglew-dev yasm libtheora-dev libogg-dev \
                       libsdl1.2-dev libfftw3-dev patch bzip2 libxml2-dev \
-                      libtinyxml-dev libjemalloc-dev libjpeg-dev libopenimageio-dev \
+                      libtinyxml-dev libjemalloc-dev libopenimageio-dev \
                       libopencolorio-dev libopenexr-dev libsndfile1-dev libx264-dev \
                       autotools-dev libtool m4 automake cmake libblkid-dev \
                       e2fslibs-dev libaudit-dev libavformat-dev ffmpeg libavdevice-dev \
-                      libswscale-dev libalut-dev libalut0 libmp3lame-dev libspnav-dev \
-                      libspnav0 libboost-all-dev &&  rm -rf /var/lib/apt/lists/*
+                      libswscale-dev libalut-dev libalut0 libspnav-dev \
+                      libspnav0 libboost-all-dev libpcl-dev libcgal-dev libeigen3-dev \
+                      liblapack-dev  libflann-dev libceres-dev \
+                      &&  rm -rf /var/lib/apt/lists/*
 
 # Pull the environment name out of the environment.yml
 RUN echo "source activate $(head -1 /tmp/environment.yml | cut -d' ' -f2)" > ~/.bashrc
@@ -58,6 +60,7 @@ RUN cd app/blender/build && cmake -DCMAKE_INSTALL_PREFIX=$PYENV/lib/python$PYVER
     -DWITH_CYCLES_EMBREE=OFF \
     -DWITH_CYCLES=ON \
     -DWITH_CYCLES_DEVICE_CUDA=$CUDA \
+    -DWITH_CYCLES_CUDA_BINARIES=$CUDA \
     -DWITH_OPENSUBDIV=ON \
     -DWITH_OPENAL=OFF \
     -DWITH_CODEC_AVI=OFF \
@@ -104,10 +107,7 @@ COPY ./openMVS /app/openMVS
 RUN mkdir -p $OPENMVSSOFT 
 
 
-RUN apt-get update && apt-get install -y \
-        libcgal-dev libeigen3-dev liblapack-dev  libflann-dev \
-        libceres-dev \
-        &&  rm -rf /var/lib/apt/lists/*
+
 
 
 
@@ -158,15 +158,11 @@ SHELL ["conda", "run", "-n", "myenv", "/bin/bash", "-c"]
 RUN cd /app/sispo && python setup.py install
 
 COPY ./DES/ /app/DES
+RUN mkdir -p /app/DES/build
 RUN mkdir /app/sispo/software/build_des
 RUN cd /app/DES/build/ && cmake ..
 RUN cd /app/DES/build && make && cp /app/DES/build/src/des /app/sispo/software/build_des/
 
-
-
-RUN apt-get update && apt-get install -y \
-        libpcl-dev \
-        &&  rm -rf /var/lib/apt/lists/*
 
 
 COPY ./DKE/ /app/DKE
