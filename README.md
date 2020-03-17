@@ -23,6 +23,14 @@ Docker requires absolute paths if you want to sync local folder with the contain
 sudo docker run -v /home/rokka/WRKDIR/sispo_docker/sispo/data/:/app/sispo/data/ -v /home/rokka/WRKDIR/sispo_docker/sispo/sispo/:/app/sispo/sispo/ --name WALTERWHITE -dit dockerfile
 '''
 
+
+With gpu
+'''
+sudo docker run --gpus=1 -v /home/rokka/WRKDIR/sispo_docker/sispo/data/:/app/sispo/data/ -v /home/rokka/WRKDIR/sispo_docker/sispo/sispo/:/app/sispo/sispo/ --name WALTERWHITE -dit dockerfile
+'''
+
+
+
 Run 
 
 '''

@@ -3,10 +3,38 @@
 #https://github.com/r-pad/model_renderer
 
 #Select parent image 
-FROM continuumio/miniconda3
+FROM nvidia/cuda:10.1-devel-ubuntu18.04
 
 
+##how many threads are used to build with make
 ENV THREADS=4
+##supported cuda version (https://developer.nvidia.com/cuda-gpus)
+ENV BLENDERCUDAVERSION=sm_61
+ENV USECUDA=ON
+
+
+#https://github.com/ContinuumIO/docker-images/blob/master/miniconda3/debian/Dockerfile
+ENV LANG=C.UTF-8 LC_ALL=C.UTF-8
+ENV PATH /opt/conda/bin:$PATH
+
+ENV DEBIAN_FRONTEND=noninteractive
+
+RUN apt-get update --fix-missing && \
+    apt-get install -y wget bzip2 ca-certificates libglib2.0-0 libxext6 libsm6 libxrender1 git mercurial subversion && \
+    apt-get clean
+
+RUN wget --quiet https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh -O ~/miniconda.sh && \
+    /bin/bash ~/miniconda.sh -b -p /opt/conda && \
+    rm ~/miniconda.sh && \
+    /opt/conda/bin/conda clean -tipsy && \
+    ln -s /opt/conda/etc/profile.d/conda.sh /etc/profile.d/conda.sh && \
+    echo ". /opt/conda/etc/profile.d/conda.sh" >> ~/.bashrc && \
+    echo "conda activate base" >> ~/.bashrc && \
+    find /opt/conda/ -follow -type f -name '*.a' -delete && \
+    find /opt/conda/ -follow -type f -name '*.js.map' -delete && \
+    /opt/conda/bin/conda clean -afy
+
+CMD [ "/bin/bash" ]
 
 
 #Make the conda environment to work in the docker image
@@ -37,15 +65,21 @@ ENV PATH /opt/conda/envs/$(head -1 /tmp/environment.yml | cut -d' ' -f2)/bin:$PA
 
 ENV PYENV=/opt/conda/envs/myenv
 ENV PYVERSION=3.7
-ENV CUDA=OFF
+
 
 #Create directory for apps
 RUN mkdir app
+
+
 
 #Copy blender. We could also "git clone" but I don't think it is a good idea to let the
 #the docker to clone the repo each time the image is build due to the small changes
 #in the remote repo. The changes in the folder will cause the blender to be build again.
 COPY ./blender ./app/blender
+
+#apply a patch
+RUN find /app/blender/intern/cycles/subd/../util/util_param.h -type f -exec sed -i 's/constexpr/const/g' {} \;
+
 
 #compile blender bpy
 RUN cd app/blender/build && cmake -DCMAKE_INSTALL_PREFIX=$PYENV/lib/python$PYVERSION/site-packages \
@@ -59,8 +93,8 @@ RUN cd app/blender/build && cmake -DCMAKE_INSTALL_PREFIX=$PYENV/lib/python$PYVER
     -DWITH_INSTALL_PORTABLE=OFF \
     -DWITH_CYCLES_EMBREE=OFF \
     -DWITH_CYCLES=ON \
-    -DWITH_CYCLES_DEVICE_CUDA=$CUDA \
-    -DWITH_CYCLES_CUDA_BINARIES=$CUDA \
+    -DWITH_CYCLES_DEVICE_CUDA=$USECUDA \
+    -DWITH_CYCLES_CUDA_BINARIES=$USECUDA \
     -DWITH_OPENSUBDIV=ON \
     -DWITH_OPENAL=OFF \
     -DWITH_CODEC_AVI=OFF \
@@ -76,6 +110,7 @@ RUN cd app/blender/build && cmake -DCMAKE_INSTALL_PREFIX=$PYENV/lib/python$PYVER
     -DWITH_MOD_FLUID=OFF \
     -DWITH_AUDASPACE=OFF \
     -DWITH_OPENCOLORIO=ON \
+    -DCYCLES_CUDA_BINARIES_ARCH=$BLENDERCUDAVERSION \
     -DCMAKE_BUILD_TYPE:STRING=Release ..
 
 
@@ -173,10 +208,6 @@ RUN cp /app/DKE/build/DKE /app/sispo/software/build_des/
 
 
 
-#add preloading for jemalloc
-#blender uses jemalloc, we could compile blender without jemalloc, but jemalloc
-#offers better memory management (python and blender can cause memory fragmentation)
-RUN echo "alias python=\"LD_PRELOAD=/usr/lib/x86_64-linux-gnu/libjemalloc.so.2 python\"" >> /root/.bashrc
 
 
 
