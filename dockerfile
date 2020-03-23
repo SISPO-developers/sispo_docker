@@ -154,8 +154,8 @@ RUN cd /app/openMVS && mkdir -p build && cd build && \
 	-DCMAKE_BUILD_TYPE=Release \
 	-DVCG_DIR=/app/VCG/ \
 	-DCMAKE_INSTALL_PREFIX=$OPENMVSSOFT/install \
-        -DOpenMVS_USE_CUDA=OFF \
-        -OpenMVS_USE_BREAKPAD=OFF
+    -DOpenMVS_USE_CUDA=OFF \
+    -OpenMVS_USE_BREAKPAD=OFF
         
 
 RUN cd /app/openMVS/build/ && make install -j$THREADS
@@ -191,22 +191,6 @@ COPY ./sispo /app/sispo
 #install sispo
 SHELL ["conda", "run", "-n", "myenv", "/bin/bash", "-c"]
 RUN cd /app/sispo && python setup.py install
-
-COPY ./DES/ /app/DES
-RUN mkdir -p /app/DES/build
-RUN mkdir /app/sispo/software/build_des
-RUN cd /app/DES/build/ && cmake ..
-RUN cd /app/DES/build && make && cp /app/DES/build/src/des /app/sispo/software/build_des/
-
-
-
-COPY ./DKE/ /app/DKE
-RUN mkdir -p /app/DKE/build
-RUN cd /app/DKE/build && cmake .. 
-RUN cd /app/DKE/build && make 
-RUN cp /app/DKE/build/DKE /app/sispo/software/build_des/
-
-
 
 
 

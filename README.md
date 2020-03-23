@@ -1,8 +1,39 @@
 ## sispo_docker 
 
+#### Requirements:
+
+CUDA capable GPU. Check other branches for the CPU version of the Sispo docker file. CUDA support for docker won't work with Windows
+
+#### Install Docker:
+
+Docker version 19.0 at least or nvidia-docker, which is not tested.
+
+##### Windows:
+
+You will need to install **Docker for windows** (for <u>Professional</u> etc.) or **Docker Toolbox** (for <u>Home edition</u>). For Docker toolbox follow: https://docs.docker.com/toolbox/toolbox_install_windows/
+
+After the installation is complete: run **Docker QuickStart Terminal** and increase the size of the VM partition (default 10gb is not enough) and specify how many cores you want to give to the VM:
+
+```
+docker-machine rm default
+docker-machine create -d virtualbox --virtualbox-memory=4096 --virtualbox-cpu-count=2 --virtualbox-disk-size=50000 default
+```
+
+https://www.ibm.com/developerworks/community/blogs/jfp/entry/Using_Docker_Machine_On_Windows?lang=en
+
+Restart Docker.
+
+**Hint:** Sometimes the VM process is not killed with the Docker, so you might need to kill it manually from the task manager.
+
+##### Linux:
+
+You are on your own buddy, because I don't remember anymore what I did. The installation was pretty straightforward, so no worry. Just remember to update your GPU drivers.
 
 
-##### Dependencies:
+
+
+
+#### Dependencies:
 
 Download all the necessary repositories:
 
@@ -10,79 +41,57 @@ Download all the necessary repositories:
 bash prepare_repos.sh
 ```
 
+Modify *"dockerfile"* lines 
 
+`ENV THREADS=4`
 
-##### Install Docker (toolbox or for windows):
+`ENV BLENDERCUDAVERSION=sm_61`
 
+to control how many threads are used during the compile process (Windows user need to also modify the VM parameters, see above).
 
+Finally find the CUDA version your GPU supports: https://developer.nvidia.com/cuda-gpus
 
 
 
 ##### Build Docker image
 
+Go to the sispo_docker folder (Windows users need to use **Docker QuickStart Terminal** )  and run. 
 
-
-
-
-
-Some useful commands, explanation comes later
-
-UCAC4 files need to be downloaded separately. 
-
-
-Build image
-
-'''
-
+```
 docker build -t dockerfile .
-
-'''
-
+```
 
 
 
+##### Run a container
 
-Docker requires absolute paths if you want to sync local folder with the container
+Docker requires absolute paths if you want to sync a local folder with the container (sync with the "-v"). This way you can modify and access files from the container.
 
-'''
-sudo docker run -v /home/rokka/WRKDIR/sispo_docker/sispo/data/:/app/sispo/data/ -v /home/rokka/WRKDIR/sispo_docker/sispo/sispo/:/app/sispo/sispo/ --name WALTERWHITE -dit dockerfile
-'''
+```
+docker run --gpus=1 -v ABSOLUTE_PATH_TO_SISPO_DATA:/app/sispo/data/ -v ABSOLUTE_PATH_TO_SISPO_FOLDER:/app/sispo/sispo/ --name WALTERWHITE -dit dockerfile
+```
 
+##### Run a command in a running container
 
-With gpu
-'''
-sudo docker run --gpus=1 -v /home/rokka/WRKDIR/sispo_docker/sispo/data/:/app/sispo/data/ -v /home/rokka/WRKDIR/sispo_docker/sispo/sispo/:/app/sispo/sispo/ --name WALTERWHITE -dit dockerfile
-'''
+```
+docker exec -it WALTERWHITE /bin/bash
+```
 
+##### Some useful commands
 
+Remove old image 
 
-Run 
+```
+docker rm -f WALTERWHITE
+```
 
-'''
-sudo docker exec -it WALTERWHITE /bin/bash
-'''
+Docker requires a lot of space, so sometimes it is good 
 
+Remove all unused containers, networks, images (both dangling and unreferenced), and optionally, volumes. (include -a to remove everything, but be ready to build the image from the start)
 
-
-
-
-
-
-Remove
-'''
-sudo docker rm -f WALTERWHITE
-'''
-
-
-
-
-NOTIFICATION:
-
-Python will be preloaded with jemalloc (Does not require any actions. Automatically done)
-
-'''
-LD_PRELOAD=/usr/lib/x86_64-linux-gnu/libjemalloc.so.2 python
-'''
+```
+docker system prune
+```
 
 
 
