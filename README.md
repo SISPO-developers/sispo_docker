@@ -51,7 +51,7 @@ to control how many threads are used during the compile process (Windows user ne
 
 Finally find the CUDA version your GPU supports: https://developer.nvidia.com/cuda-gpus
 
-
+If GPU is not available, the Blender will be built for CPU only.
 
 ##### Build Docker image
 
