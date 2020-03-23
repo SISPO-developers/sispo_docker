@@ -1,4 +1,29 @@
-# sispo_docker 
+## sispo_docker 
+
+
+
+##### Dependencies:
+
+Download all the necessary repositories:
+
+```bash
+bash prepare_repos.sh
+```
+
+
+
+##### Install Docker (toolbox or for windows):
+
+
+
+
+
+##### Build Docker image
+
+
+
+
+
 
 Some useful commands, explanation comes later
 

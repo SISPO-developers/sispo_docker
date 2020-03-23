@@ -2,11 +2,13 @@
 
 CURWRKDIR=pwd
 
+#Download default sispo folder, blender, star_cats, openmvg, openmvs
+#Later UCAC4 needs to be included, but it takes so much time :(
+
 
 #Download sispo and create and some necessary folders used during the simulation
 function download_sispo {
-    #git clone https://github.com/YgabrielsY/sispo.git
-    git clone https://github.com/thvaisa/sispo
+    git clone https://github.com/YgabrielsY/sispo.git
     mkdir -p ./sispo/data/results
     mkdir -p ./sispo/data/UCAC4  
 }
@@ -47,8 +49,6 @@ function download_openmvs {
 
 
 download_sispo
-git clone git@github.com:thvaisa/DES.git
-git clone git@github.com:thvaisa/DKE.git
 download_openmvs
 download_openmvg
 download_star_cats
