@@ -53,6 +53,8 @@ Finally find the CUDA version your GPU supports: https://developer.nvidia.com/cu
 
 If GPU is not available, the Blender will be built for CPU only.
 
+If the error message `docker: Error response from daemon: could not select device driver "" with capabilities: [[gpu]].` it might be nessecary to install `nvidia-container-runtime`. A guide can be found here https://collabnix.com/introducing-new-docker-cli-api-support-for-nvidia-gpus-under-docker-engine-19-03-0-beta-release/
+
 ##### Build Docker image
 
 Go to the sispo_docker folder (Windows users need to use **Docker QuickStart Terminal** )  and run. 
