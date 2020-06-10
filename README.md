@@ -70,7 +70,7 @@ docker build -t dockerfile .
 Docker requires absolute paths if you want to sync a local folder with the container (sync with the "-v"). This way you can modify and access files from the container.
 
 ```
-docker run --gpus=1 -v ABSOLUTE_PATH_TO_SISPO_DATA:/app/sispo/data/ -v ABSOLUTE_PATH_TO_SISPO_FOLDER:/app/sispo/sispo/ --name WALTERWHITE -dit dockerfile
+docker run --gpus=1 -v ABSOLUTE_PATH_TO_SISPO_DATA:/app/sispo/data/ -v ABSOLUTE_PATH_TO_SISPO_FOLDER:/app/sispo/ --name WALTERWHITE -dit dockerfile
 ```
 
 ##### Run a command in a running container

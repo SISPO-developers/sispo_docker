@@ -8,7 +8,7 @@ CURWRKDIR=pwd
 
 #Download sispo and create and some necessary folders used during the simulation
 function download_sispo {
-    git clone https://github.com/YgabrielsY/sispo.git
+    git clone https://github.com/SISPO-developers/sispo.git
     mkdir -p ./sispo/data/results
     mkdir -p ./sispo/data/UCAC4  
 }
@@ -49,17 +49,3 @@ function download_openmvs {
 
 
 download_sispo
-download_openmvs
-download_openmvg
-download_star_cats
-download_blender
-
-
-
-
-
-
-
-
-
-
