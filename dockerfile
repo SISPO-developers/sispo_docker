@@ -22,8 +22,8 @@ RUN apt-get update \
 	&& rm -rf /var/lib/apt/lists/*
 
 RUN wget $CONDAREPO \
-    && bash $CONDA -b \
-    && rm -f $CONDA 
+	&& bash $CONDA -b \
+	&& rm -f $CONDA 
 
 
 #Install some necessary dependencies for the blender and remove 
@@ -74,13 +74,13 @@ RUN cd app/blender/build && cmake .. \
     -DWITH_CYCLES=ON \
     -DWITH_CYCLES_DEVICE_CUDA=$USE_CUDA \
     -DWITH_CYCLES_CUDA_BINARIES=$USE_CUDA \
-	-DCYCLES_CUDA_BINARIES_ARCH=$CUDA_VERSION \
+    -DCYCLES_CUDA_BINARIES_ARCH=$CUDA_VERSION \
     -DWITH_OPENSUBDIV=ON \
     -DWITH_OPENAL=OFF \
     -DWITH_CODEC_AVI=OFF \
     -DWITH_MOD_OCEANSIM=OFF \
     -DWITH_CODEC_FFMPEG=OFF \
-	-DWITH_QUADRIFLOW=OFF \
+    -DWITH_QUADRIFLOW=OFF \
     -DWITH_SYSTEM_GLEW=OFF \
     -DWITH_FFTW3=ON \
     -DWITH_INTERNATIONAL=OFF \
@@ -91,12 +91,12 @@ RUN cd app/blender/build && cmake .. \
     -DWITH_MOD_FLUID=OFF \
     -DWITH_AUDASPACE=OFF \
     -DWITH_OPENCOLORIO=ON \
-	-DPYTHON_ROOT_DIR=$CONDA_ENV/bin \
-	-DPYTHON_SITE_PACKAGES=$CONDA_ENV/lib/python$PYVERSION/site-packages \
+    -DPYTHON_ROOT_DIR=$CONDA_ENV/bin \
+    -DPYTHON_SITE_PACKAGES=$CONDA_ENV/lib/python$PYVERSION/site-packages \
     -DPYTHON_INCLUDE_DIR="$CONDA_ENV/include/python${PYVERSION}m" \
     -DPYTHON_LIBRARY="$CONDA_ENV/lib/libpython${PYVERSION}m.so" \
-	-DCMAKE_INSTALL_PREFIX=$CONDA_ENV/lib/python$PYVERSION/site-packages \
-	-DPYTHON_VERSION=$PYVERSION \
+    -DCMAKE_INSTALL_PREFIX=$CONDA_ENV/lib/python$PYVERSION/site-packages \
+    -DPYTHON_VERSION=$PYVERSION \
     -DCMAKE_BUILD_TYPE:STRING=Release
 
 #make and install
@@ -125,10 +125,10 @@ RUN cd /app/ && git clone https://github.com/cdcseacave/openMVS.git
 RUN cd /app/ && git clone https://github.com/cdcseacave/VCG.git
 RUN mkdir /app/openMVS/build -p && cd /app/openMVS/build &&\
     cmake .. -DCMAKE_BUILD_TYPE=Release \
-		-DVCG_DIR=/app/VCG/ \
-		-DCMAKE_INSTALL_PREFIX=$OPENMVS_PATH/install \
-		-DOpenMVS_USE_CUDA=OFF \
-		-DOpenMVS_USE_BREAKPAD=OFF 
+            -DVCG_DIR=/app/VCG/ \
+            -DCMAKE_INSTALL_PREFIX=$OPENMVS_PATH/install \
+            -DOpenMVS_USE_CUDA=OFF \
+            -DOpenMVS_USE_BREAKPAD=OFF 
 
 #Don't try to compile with multiple threads. Crashes the compilation eventually,
 #Been there, done that, and wasted my precious life
