@@ -1,7 +1,7 @@
 .git
 .cache
-*sispo/doc/*
-*sispo/data/*
+sispo/doc/*
+sispo/data/*
 DES/build/
 DKE/build/
 openMVG/build/
