@@ -41,7 +41,7 @@ RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y nano gcc
                       e2fslibs-dev libaudit-dev libavformat-dev ffmpeg libavdevice-dev \
                       libswscale-dev libalut-dev libalut0 libspnav-dev \
                       libspnav0 libboost-all-dev libpcl-dev libcgal-dev libeigen3-dev \
-                      liblapack-dev  libflann-dev libceres-dev tzdata\
+                      liblapack-dev  libflann-dev libceres-dev tzdata libglfw3-dev \
                       &&  rm -rf /var/lib/apt/lists/*
 					
 
@@ -61,6 +61,18 @@ RUN cd /app/blender && git checkout blender-v2.82-release \
 	
 #install dependencies, nice but takes forever
 #RUN /bin/bash /app/blender/build_files/build_environment/install_deps.sh
+
+
+#opensubdiv is nice to have
+RUN cd app && git clone https://github.com/PixarAnimationStudios/OpenSubdiv.git
+RUN cd app/OpenSubdiv && mkdir build && cd build && 
+	cmake -D NO_PTEX=1 -D NO_DOC=1 \
+		-D NO_OMP=0 -D NO_TBB=1 \
+		-D NO_CUDA=1 -D NO_OPENCL=1 \
+		-D NO_CLEW=1 -D NO_LIB=0 ..
+
+RUN cmake --build . --config Release --target install
+
 
 ENV CONDA_ENV=/root/miniconda3/
 ENV PYVERSION=3.7
