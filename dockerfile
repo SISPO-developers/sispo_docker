@@ -7,7 +7,7 @@ ENV THREADS=4
 #supported cuda version (https://developer.nvidia.com/cuda-gpus)
 ENV CUDA_VERSION=sm_61
 #cmake will set this off if cuda is not found
-ENV USE_CUDA=ON
+ENV USE_CUDA=OFF
 
 
 #Set up Conda environment and python
@@ -34,6 +34,8 @@ RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y nano gcc
                       libxrandr-dev libxinerama-dev libbz2-dev libncurses5-dev \
                       libssl-dev liblzma-dev libreadline-dev libopenal-dev \
                       libglew-dev yasm libtheora-dev libogg-dev \
+					  &&  rm -rf /var/lib/apt/lists/*
+RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y \					  
                       libsdl1.2-dev libfftw3-dev patch bzip2 libxml2-dev \
                       libtinyxml-dev libjemalloc-dev libopenimageio-dev \
                       libopencolorio-dev libopenexr-dev libsndfile1-dev libx264-dev \
@@ -65,18 +67,18 @@ RUN cd /app/blender && git checkout blender-v2.82-release \
 
 #opensubdiv is nice to have
 RUN cd app && git clone https://github.com/PixarAnimationStudios/OpenSubdiv.git
-RUN cd app/OpenSubdiv && mkdir build && cd build && 
+RUN cd app/OpenSubdiv && mkdir build && cd build && \
 	cmake -D NO_PTEX=1 -D NO_DOC=1 \
 		-D NO_OMP=0 -D NO_TBB=1 \
 		-D NO_CUDA=1 -D NO_OPENCL=1 \
 		-D NO_CLEW=1 -D NO_LIB=0 ..
 
-RUN cmake --build . --config Release --target install
+RUN cd /app/OpenSubdiv/build && cmake --build . --config Release --target install
 
 
 ENV CONDA_ENV=/root/miniconda3/
 ENV PYVERSION=3.7
-ENV USE_CUDA=OFF
+
 #compile blender bpy
 RUN cd app/blender/build && cmake .. \
     -DWITH_PYTHON_INSTALL=OFF \
@@ -165,4 +167,4 @@ RUN cd /app/sispo && python setup.py install
 
 #BPY was build using jemalloc so it needs to be preloaded when calling it
 RUN echo 'alias python="LD_PRELOAD=/lib/x86_64-linux-gnu/libjemalloc.so.2 python"' >> ~/.bashrc  
-
+RUN echo 'export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/lib/' >> ~/.bashrc 
