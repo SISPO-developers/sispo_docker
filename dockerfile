@@ -168,3 +168,10 @@ RUN cd /app/sispo && python setup.py install
 #BPY was build using jemalloc so it needs to be preloaded when calling it
 RUN echo 'alias python="LD_PRELOAD=/lib/x86_64-linux-gnu/libjemalloc.so.2 python"' >> ~/.bashrc  
 RUN echo 'export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/lib/' >> ~/.bashrc 
+
+#Some ComaCreator stuff and make life easy
+RUN pip install cython tricubic
+RUN conda install -c conda-forge pyembree
+RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y \					  
+                      vim tmux emacs \
+                      &&  rm -rf /var/lib/apt/lists/*
