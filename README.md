@@ -100,7 +100,7 @@ which gives you access to the container. It is important to realize that you nee
 Remove old image 
 
 ```
-docker rm -f WALTERWHITE
+docker rm -f SISPOKONTTI
 ```
 
 Docker requires a lot of space, so sometimes it is a good idea to remove all unused containers, networks, images (both dangling and unreferenced), and optionally, volumes. (include -a to remove everything, but be ready to build the image from the start)
@@ -110,6 +110,13 @@ docker system prune
 docker system prune
 ```
 
+If you restart the computer or stop the container, you might want to restart it instead of running a new container from the clean image. After of which you can continue with the "docker exec ..." line (see above).
 
+```
+docker restart SISPOKONTTI
+```
 
+##### Info
+
+Star catalog (UCAC4) must be downloaded manually. 
 
