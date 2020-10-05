@@ -118,5 +118,8 @@ docker restart SISPOKONTTI
 
 ##### Info
 
-Star catalog (UCAC4) must be downloaded manually. 
-ComaCreator must be installed manually but the dockerfile already installs required packages.
+
+* Star catalog (UCAC4) must be downloaded manually. 
+* ComaCreator must be installed manually but the dockerfile already installs required packages.
+* For people interested in using sispo+cuda+windows: https://developer.nvidia.com/blog/announcing-cuda-on-windows-subsystem-for-linux-2/
+
