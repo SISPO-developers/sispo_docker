@@ -119,4 +119,4 @@ docker restart SISPOKONTTI
 ##### Info
 
 Star catalog (UCAC4) must be downloaded manually. 
-
+ComaCreator must be installed manually but the dockerfile already installs required packages.
