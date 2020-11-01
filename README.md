@@ -81,7 +81,7 @@ Docker requires absolute paths if you want to sync a local folder with the conta
 docker run -v ABSOLUTE_PATH_TO_SISPO_DATA:/app/sispo/data/ --name SISPOKONTTI -dit dockerfile
 ```
 
-**Windows users** need to use -v "/C/PATH:/app/sispo/data" . Also, if you want to mount those volumes with -v, you might need to access the synced folder from your user folder C:/Users/USER/ instead e.g. C:/SOME_PATH/sispo/data. This has something to do with access permissions, but I have not tested the theory. 
+**Windows users** need to use -v "/c/PATH:/app/sispo/data" . Also, if you want to mount those volumes with -v, you might need to access the synced folder from your user folder C:/Users/USER/ instead e.g. C:/SOME_PATH/sispo/data. This has something to do with access permissions, but I have not tested the theory. Also, the mounted drive should be with a lowercase (/c/), not uppercase (/C/). 
 
 Those who need GPU support add "--gpus=1" to the beginning (if supported). 
 
